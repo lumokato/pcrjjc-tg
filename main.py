@@ -1,47 +1,28 @@
-from telegram.ext import Updater, CommandHandler
-# import logging
-import account as account
+from telegram.ext import Updater, CommandHandler, JobQueue
+import config as cg
 import time
-# logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-from telegram.ext import Updater, CommandHandler
-REQUEST_KWARGS = {
-    # "USERNAME:PASSWORD@" is optional, if you need authentication:
-    # 'proxy_url': 'http://127.0.0.1:10809/',
-}
+import logging
+from telegram.ext.dispatcher import run_async
 
-bot = Updater(token='2096122895:AAEZstwii4QrlrIK8HvHAey36VTNDebVEfk', request_kwargs=REQUEST_KWARGS, use_context=True)
+root = logging.getLogger()
+root.setLevel(logging.INFO)
 
-dispatcher = bot.dispatcher
-from pcrclient import pcrclient, ApiException
-
-def query(client, id: str):
-    res = client.callapi('/profile/get_profile', {
-            'target_viewer_id': int(id)
-        })
-    if 'user_info' not in res:
-        client.login(account.uid, account.access_key)
-        res = client.callapi('/profile/get_profile', {
-            'target_viewer_id': int(id)})
-    return res
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-def start(update, context):
-    client = pcrclient(account.viewer_id)
-    client.login(account.uid, account.access_key)
-    res = query(client,"1193285189140")
-
-    last_login_time = int(res['user_info']['last_login_time'])
-    last_login_date = time.localtime(last_login_time)
-    last_login_str = time.strftime('%Y-%m-%d %H:%M:%S',last_login_date)
-
-    text = f'''昵称：{res['user_info']["user_name"]}
-jjc：{res['user_info']["arena_rank"]}
-pjjc：{res['user_info']["grand_arena_rank"]}
-最后登录：{last_login_str}'''
-    context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+@run_async
+def send_async(context, *args, **kwargs):
+    context.bot.send_message(*args, **kwargs)
 
 
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
+def main():
+    bot = Updater(token='2096122895:AAEZstwii4QrlrIK8HvHAey36VTNDebVEfk', request_kwargs={'proxy_url': cg.proxy_url}, use_context=True)
+    dp = bot.dispatcher
+    dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(JobQueue, start)
+    bot.start_polling()
 
-bot.start_polling()
+
+if __name__ == '__main__':
+    main()

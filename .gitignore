@@ -3,4 +3,5 @@
 __pycache__/*
 discord/
 .idea/
+config.py
 account.py
