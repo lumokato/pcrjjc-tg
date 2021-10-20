@@ -3,6 +3,7 @@ import config as cg
 import time
 import logging
 from telegram.ext.dispatcher import run_async
+import new_jjc as jjc
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -11,16 +12,17 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
-@run_async
-def send_async(context, *args, **kwargs):
-    context.bot.send_message(*args, **kwargs)
+# @run_async
+# def send_async(context, *args, **kwargs):
+#     context.bot.send_message(*args, **kwargs)
 
 
 def main():
-    bot = Updater(token='2096122895:AAEZstwii4QrlrIK8HvHAey36VTNDebVEfk', request_kwargs={'proxy_url': cg.proxy_url}, use_context=True)
+    bot = Updater(token=cg.TOKEN, request_kwargs={'proxy_url': cg.proxy_url}, use_context=True)
     dp = bot.dispatcher
-    dp.add_handler(CommandHandler('start', start))
-    dp.add_handler(JobQueue, start)
+    dp.add_handler(CommandHandler('start', jjc.start, run_async=True))
+    dp.add_handler(CommandHandler('help', jjc.send_jjchelp, run_async=True))
+    # dp.add_handler(JobQueue, start)
     bot.start_polling()
 
 
