@@ -106,8 +106,9 @@ pjjc：{res['user_info']["grand_arena_rank"]}
 
 def on_query_arena_all(update, context):
     global binds
-    id = context.args[0]
-    if id is None:
+    try:
+        id = context.args[0]
+    except IndexError:
         chatid = str(update.effective_chat.id)
         if chatid not in binds:
             context.bot.send_message(chatid, '未绑定竞技场')
