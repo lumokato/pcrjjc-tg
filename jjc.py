@@ -136,7 +136,7 @@ def on_query_arena_all(update, context):
 jjc：{res['user_info']["arena_rank"]}
 pjjc：{res['user_info']["grand_arena_rank"]}
 战力：{res['user_info']["total_power"]}
-等级：{res['user_info']["team_largsel"]}
+等级：{res['user_info']["team_level"]}
 jjc场次：{res['user_info']["arena_group"]}
 jjc创建日：{arena_str}
 pjjc场次：{res['user_info']["grand_arena_group"]}
