@@ -1,7 +1,4 @@
 *.json
-*.xml
 __pycache__/*
-discord/
 .idea/
 config.py
-account.py

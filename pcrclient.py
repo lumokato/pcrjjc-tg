@@ -1,8 +1,6 @@
 import requests
 import PCRPack as Pack
-import ast
 import hashlib
-import base64
 import random
 from nonebot import log
 
