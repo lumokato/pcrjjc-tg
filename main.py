@@ -26,7 +26,7 @@ def main():
     dp.add_handler(CommandHandler('del', jjc.delete_arena_sub, run_async=True))
     dp.add_handler(CommandHandler('status', jjc.send_arena_sub_status, run_async=True))
     # dp.add_handler(CommandHandler('start', jjc.start_schedule, pass_job_queue=True))
-    bot.job_queue.run_repeating(jjc.on_arena_schedule, 60)
+    bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
     bot.start_polling()
 
 

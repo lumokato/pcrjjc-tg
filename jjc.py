@@ -53,7 +53,7 @@ def query(id: str):
             'target_viewer_id': int(id)
         })
     if 'user_info' not in res:
-        client.login(cg.chatid, cg.access_key)
+        client.login(cg.uid, cg.access_key)
         res = client.callapi('/profile/get_profile', {
             'target_viewer_id': int(id)})
     return res
