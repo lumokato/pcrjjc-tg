@@ -7,7 +7,6 @@ import telegram.ext
 from os.path import dirname, join, exists
 from json import load, dump
 import logging
-import pandas as pd
 import csv
 
 root = logging.getLogger()
