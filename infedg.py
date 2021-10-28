@@ -1,7 +1,6 @@
 import requests
 import csv
 import json
-import pandas as pd
 
 
 class WebClient0:
@@ -181,52 +180,13 @@ def minus_damage(date_list, savefile: str):
             for k in range(date_num):
                 row_name = 'damage_day' + str(k + 1)
                 raw_data[row_name].append(detail_damage[clan_grade_rank][k])
-    df = pd.DataFrame(raw_data)
-    df.to_csv('./data/' + savefile, index=False, encoding="utf8")
-
-
-def minus_damage_avg(date_list, savefile: str):
-    date_num = len(date_list)
-    detail_clan = read_detail(date_list[-1])
-    damage_list = []
-    damage_avg_list = []
-    clan_list = []
-    for i in range(date_num):
-        damage_list.append(read_damage_grade_rank(date_list[i]))
-        if i > 0:
-            for clan in clan_list:
-                if clan not in damage_list[i].keys():
-                    clan_list.remove(clan)
-        else:
-            for clan in damage_list[i].keys():
-                clan_list.append(clan)
-    detail_damage = {}
-    for clan in clan_list:
-        for j in range(date_num):
-            if j > 0:
-                detail_damage[clan].append(int(damage_list[j][clan]) - int(damage_list[j-1][clan]))
-            else:
-                detail_damage[clan] = [int(damage_list[j][clan])]
-    raw_data = {'rank': [],
-                'clan_name': [],
-                'leader_name': []}
-    for k in range(date_num):
-        row_name = 'damage_avg_day' + str(k + 1)
-        raw_data[row_name] = []
-    for clan_rank in detail_clan.keys():
-        if detail_clan[clan_rank][0] in detail_damage.keys():
-            clan_grade_rank = detail_clan[clan_rank][0]
-            raw_data['rank'].append(clan_rank)
-            raw_data['clan_name'].append(detail_clan[clan_rank][1])
-            raw_data['leader_name'].append(detail_clan[clan_rank][2])
-            for l in range(date_num):
-                row_name = 'damage_avg_day' + str(l + 1)
-                if l == 0:
-                    raw_data[row_name].append(str(round(damage_status(detail_damage[clan_grade_rank][l])/900000, 2))+'w')
-                else:
-                    raw_data[row_name].append(str(round((damage_status(detail_damage[clan_grade_rank][l] + detail_damage[clan_grade_rank][l-1]) - damage_status(detail_damage[clan_grade_rank][l-1]))/900000, 2))+'w')            
-    df = pd.DataFrame(raw_data)
-    df.to_csv('./rank/' + savefile, index=False, encoding="utf8")
+    with open('./data/damage.csv', 'w', encoding="utf8") as csvfile:
+        for i in range(len(raw_data['rank'])):
+            line = ''
+            for keyword in raw_data.keys():
+                line += str(raw_data[keyword][i]) + ','
+            csvfile.write(line[:-1] + '\n')
+        csvfile.close()
 
 
 def rank_byqda(openfile: str, savefile: str):
@@ -297,4 +257,3 @@ if __name__ == "__main__":
     page_to_csv("1027")
     page_to_csv("1028")
     minus_damage(["1027", "1028"], "damage.csv")
-    # data = pd.read_csv('./data/damage.csv')
