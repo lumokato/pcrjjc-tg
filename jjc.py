@@ -7,6 +7,8 @@ import telegram.ext
 from os.path import dirname, join, exists
 from json import load, dump
 import logging
+import pandas as pd
+import csv
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -216,3 +218,30 @@ def on_arena_schedule(context):
 def start_schedule(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='开启定时')
     update.job_queue.run_repeating()
+
+
+def damage_percentage(update, context):
+    data = {}
+    with open('./data/damage.csv', 'r', encoding="utf8") as f:
+        for line in csv.reader(f):
+            try:
+                data[int(line[1])] = line
+            except ValueError:
+                continue
+    # data = pd.read_csv('./data/damage.csv')
+    text = '当日推测进度：' + '\n'
+    temp = client.callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': 0, 'is_my_clan': 0, 'is_first': 1})
+    if 'period_ranking' not in temp:
+        client.login(cg.uid, cg.access_key)
+        temp = client.Callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': 0, 'is_my_clan': 0, 'is_first': 1})
+    for clan in temp['period_ranking']:
+        damage_now = clan['damage']
+        grade_rank = clan['grade_rank']
+        damage_yesterday = int(data[grade_rank][-1])
+        damage_all = 0
+        for i in range(4, len(data[grade_rank])):
+            damage_all += int(data[grade_rank][i])
+        damage_today = damage_now - damage_all
+        text += str(clan['rank']) + ': ' + clan['clan_name'] + '  ' + '{:.0%}'.format(damage_today/damage_yesterday) + '\n'
+    chatid = str(update.effective_chat.id)
+    context.bot.send_message(chatid, text)
