@@ -2,6 +2,7 @@ from telegram.ext import Updater, CommandHandler
 import config as cg
 import logging
 import jjc
+import infedg as clan
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -25,7 +26,8 @@ def main():
     dp.add_handler(CommandHandler('change', jjc.change_arena_sub, run_async=True))
     dp.add_handler(CommandHandler('del', jjc.delete_arena_sub, run_async=True))
     dp.add_handler(CommandHandler('status', jjc.send_arena_sub_status, run_async=True))
-    dp.add_handler(CommandHandler('clan', jjc.damage_percentage, run_async=True))
+    dp.add_handler(CommandHandler('rate', jjc.damage_percentage, run_async=True))
+    dp.add_handler(CommandHandler('refresh', clan.refresh_damage, run_async=True))
     # dp.add_handler(CommandHandler('start', jjc.start_schedule, pass_job_queue=True))
     bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
     bot.start_polling()

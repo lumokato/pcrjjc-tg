@@ -1,6 +1,7 @@
 import requests
 import csv
 import json
+import time
 
 
 class WebClient0:
@@ -51,6 +52,9 @@ def page_to_csv(date: str):
                 data = '\"""{0}\""",{1},\"""{2}\""",{3},{4}\n'.format(line['clan_name'], line['damage'], line['leader_name'], line['grade_rank'], line['rank'])
                 csvfile.write(data)
         csvfile.close()
+        return True
+    else:
+        return False
 
 
 def walk_date():
@@ -89,63 +93,10 @@ def find_index(finder: int, lister: list):
     return index
 
 
-def find_rank():
-    b_day1 = []
-    b_day2 = []
-    b_day3 = []
-    b_day4 = []
-    b_day5 = []
-    qd_data = []
-    with open('./rank/damage_byrankqd.csv', 'r', encoding="utf8") as csvfile:
-        for line in csv.reader(csvfile):
-            b_day1.append(int(line[0]))
-            b_day2.append(int(line[1]))
-            b_day3.append(int(line[2]))
-            b_day4.append(int(line[3]))
-            b_day5.append(int(line[4]))
-        csvfile.close()
-    with open('./rank/damage_qd.csv', 'r', encoding="utf8") as csvfile:
-        for line in csv.reader(csvfile):
-            qd_data.append('{0},{1},{2},{3},{4},{5},{6},{7}\n'.format(line[0], line[1], line[2], find_index(int(line[3]), b_day1), find_index(int(line[4]), b_day2), find_index(int(line[5]), b_day3), find_index(int(line[6]), b_day4), find_index(int(line[7]), b_day5)))
-        csvfile.close()
-    with open('./rank/rank_qd2.csv', 'w', encoding="utf8") as csvfile:
-        for line in qd_data:
-            csvfile.write(line)
-        csvfile.close()
-
-
-def rank_byqd():
-    qd_day1 = []
-    qd_day2 = []
-    qd_day3 = []
-    qd_day4 = []
-    qd_day5 = []
-    qd_day6 = []
-    qd_data = []
-    with open('./rank/damage_qd.csv', 'r', encoding="utf8") as csvfile:
-        for line in csv.reader(csvfile):
-            qd_day1.append(int(line[3]))
-            qd_day2.append(int(line[4]))
-            qd_day3.append(int(line[5]))
-            qd_day4.append(int(line[6]))
-            qd_day5.append(int(line[7]))
-            qd_day6.append(int(line[8]))
-        csvfile.close()
-    with open('./rank/damage_qd.csv', 'r', encoding="utf8") as csvfile:
-        for line in csv.reader(csvfile):
-            qd_data.append('{0},{1},{2},{3},{4},{5},{6},{7},{8}\n'.format(line[0], line[1], line[2], find_index(int(line[3]), sorted(qd_day1,reverse=True)), find_index(int(line[4]), sorted(qd_day2,reverse=True)), find_index(int(line[5]), sorted(qd_day3,reverse=True)), find_index(int(line[6]), sorted(qd_day4,reverse=True)), find_index(int(line[7]), sorted(qd_day5,reverse=True)), find_index(int(line[8]), sorted(qd_day6,reverse=True))))
-        csvfile.close()
-    with open('./rank/rank_qd3.csv', 'w', encoding="utf8") as csvfile:
-        for line in qd_data:
-            csvfile.write(line)
-        csvfile.close()
-
-
 def minus_damage(date_list, savefile: str):
     date_num = len(date_list)
     detail_clan = read_detail(date_list[-1])
     damage_list = []
-    damage_avg_list = []
     clan_list = []
     for i in range(date_num):
         damage_list.append(read_damage_grade_rank(date_list[i]))
@@ -189,71 +140,26 @@ def minus_damage(date_list, savefile: str):
         csvfile.close()
 
 
-def rank_byqda(openfile: str, savefile: str):
-    qd_data = []
-    with open('./rank/' + openfile, 'r', encoding="utf8") as csvfile:
-        for line in csv.reader(csvfile):
-            if line[0] == 'rank':
-                day_num = len(line) - 3
-                day_str = line[3:]
-                for i in day_str:
-                    globals()[i] = []
-            if line[0] != 'rank':
-                for day in day_str:
-                    index = int(day[-1]) + 2
-                    exec(f"{day}.append(int(line[{index}]))")
-        csvfile.close()
-    with open('./rank/' + openfile, 'r', encoding="utf8") as csvfile:
-        for line in csv.reader(csvfile):
-            if line[0] != 'rank':
-                # append_line = '{0},{1},{2}'.format(line[0], line[1], line[2])
-                append_line = '{0},{1}'.format(line[0], line[1])
-                rank_list = []
-                for day in day_str:
-                    index = int(day[-1]) + 2
-                    exec(f"rank_list.append(find_index(int(line[{index}]), sorted({day},reverse=True)))")
-                for rank in rank_list:
-                    append_line += ',' + str(rank)
-                qd_data.append(append_line + '\n')
-        csvfile.close()
-    with open('./rank/' + savefile, 'w', encoding="utf8") as csvfile:
-        for line in qd_data:
-            csvfile.write(line)
-        csvfile.close()
+def damage_to_data():
+    date_num = 0
+    date_list = ["1027", "1028", "1029", "1030", "1031"]
+    for date in date_list:
+        if page_to_csv(date):
+            date_num += 1
+            time.sleep(5)
+        else:
+            break
+    minus_damage(date_list[0: date_num], "damage.csv")
+    return True
 
 
-BOSS_LIFE_LIST = [6000000, 8000000, 10000000, 12000000, 15000000]
-BOSS_SCORE_MUTIPILE = [[1.0, 1.0, 1.3, 1.3, 1.5], [1.4, 1.4, 1.8, 1.8, 2.0], [2.0, 2.0, 2.5, 2.5, 3.0]]
-LAP_UPGRADE = [4, 11]
-
-
-def damage_status(score):
-    lap = 1
-    boss_id = 0
-    ptr = 0
-    damage = 0
-    while True:
-        tmp = int(BOSS_LIFE_LIST[boss_id] * BOSS_SCORE_MUTIPILE[ptr][boss_id])
-        if score < tmp:
-            remaining = int(BOSS_LIFE_LIST[boss_id] - score / BOSS_SCORE_MUTIPILE[ptr][boss_id])
-            return damage + BOSS_LIFE_LIST[boss_id] - remaining
-        score -= tmp
-        damage += BOSS_LIFE_LIST[boss_id]
-        boss_id += 1
-        if boss_id > 4:
-            boss_id = 0
-            lap += 1
-            if ptr <= 1:
-                if lap >= LAP_UPGRADE[ptr]:
-                    ptr += 1
-
-
-def average_damage():
-    print((damage_status(607742210)-damage_status(0))/90)
-    print((damage_status(1375051245)-damage_status(607742210))/90)
+def refresh_damage(update, context):
+    text = ""
+    if damage_to_data():
+        text = "已刷新工会战伤害"
+    chatid = str(update.effective_chat.id)
+    context.bot.send_message(chatid, text)
 
 
 if __name__ == "__main__":
-    page_to_csv("1027")
-    page_to_csv("1028")
-    minus_damage(["1027", "1028"], "damage.csv")
+    damage_to_data()

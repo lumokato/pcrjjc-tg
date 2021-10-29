@@ -3,7 +3,6 @@ import config as cg
 from copy import deepcopy
 from traceback import format_exc
 import time
-import telegram.ext
 from os.path import dirname, join, exists
 from json import load, dump
 import logging
@@ -228,7 +227,7 @@ def damage_percentage(update, context):
             except ValueError:
                 continue
     # data = pd.read_csv('./data/damage.csv')
-    text = '当日推测进度：' + '\n'
+    text = '本日推测进度：' + '\n'
     temp = client.callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': 0, 'is_my_clan': 0, 'is_first': 1})
     if 'period_ranking' not in temp:
         client.login(cg.uid, cg.access_key)
