@@ -310,4 +310,4 @@ def damage_percentage_stage(update, context):
 
 
 if __name__ == "__main__":
-    damage_stage()
+    damage_stage(0)
