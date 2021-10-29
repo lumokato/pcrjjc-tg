@@ -304,7 +304,7 @@ def damage_percentage_stage(update, context):
             damage_stage = int(stage_data[grade_rank][-1]) - int(stage_data[grade_rank][-3])
         except Exception:
             damage_stage = 0
-        text += str(clan['rank']) + ': ' + clan['clan_name'] + '  ' + '{:.0%}'.format(damage_today/damage_yesterday) + '  ' + '{:.2%}'.format(damage_stage/damage_yesterday) + '\n'
+        text += str(clan['rank']) + ': ' + clan['clan_name'] + '  ' + '{:.0%}'.format(damage_today/damage_yesterday) + '  ' + '{:.2%}'.format(10*damage_stage/damage_yesterday) + '\n'
     chatid = str(update.effective_chat.id)
     context.bot.send_message(chatid, text)
 
