@@ -218,6 +218,15 @@ def start_schedule(update, context):
     update.job_queue.run_repeating()
 
 
+def query_page(page: int):
+    temp = client.callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
+    if 'period_ranking' not in temp:
+        client.login(cg.uid, cg.access_key)
+        temp = client.Callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
+    time.sleep(5)
+    return temp['period_ranking']
+
+
 def damage_percentage(update, context):
     data = {}
     with open('./data/damage.csv', 'r', encoding="utf8") as f:
@@ -228,11 +237,7 @@ def damage_percentage(update, context):
                 continue
     # data = pd.read_csv('./data/damage.csv')
     text = '本日推测进度：' + '\n'
-    temp = client.callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': 0, 'is_my_clan': 0, 'is_first': 1})
-    if 'period_ranking' not in temp:
-        client.login(cg.uid, cg.access_key)
-        temp = client.Callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': 0, 'is_my_clan': 0, 'is_first': 1})
-    for clan in temp['period_ranking']:
+    for clan in query_page(0):
         damage_now = clan['damage']
         grade_rank = clan['grade_rank']
         damage_yesterday = int(data[grade_rank][-1])
@@ -243,3 +248,66 @@ def damage_percentage(update, context):
         text += str(clan['rank']) + ': ' + clan['clan_name'] + '  ' + '{:.0%}'.format(damage_today/damage_yesterday) + '\n'
     chatid = str(update.effective_chat.id)
     context.bot.send_message(chatid, text)
+
+
+def damage_stage(context):
+    stage_data = {}
+    try:
+        with open('./data/stage.csv', 'r', encoding="utf8") as f:
+            for line in csv.reader(f):
+                try:
+                    stage_data[int(line[1])] = line
+                except ValueError:
+                    break
+    except FileNotFoundError:
+        print('不存在文件')
+    for i in range(5):
+        for clan in query_page(i):
+            damage_now = clan['damage']
+            grade_rank = clan['grade_rank']
+            if grade_rank in stage_data.keys():
+                stage_data[grade_rank].append(str(damage_now))
+            else:
+                stage_data[grade_rank] = [str(clan['rank']), str(clan['grade_rank']), clan['clan_name'], clan['leader_name'], str(clan['damage'])]
+    with open('./data/stage.csv', 'w', encoding="utf8") as f:
+        for clan_rank in stage_data.keys():
+            f.write(','.join(stage_data[clan_rank])[:-1]+'\n')
+        f.close()
+
+
+def damage_percentage_stage(update, context):
+    data = {}
+    with open('./data/damage.csv', 'r', encoding="utf8") as f:
+        for line in csv.reader(f):
+            try:
+                data[int(line[1])] = line
+            except ValueError:
+                continue
+    stage_data = {}
+    with open('./data/stage.csv', 'r', encoding="utf8") as f:
+        for line in csv.reader(f):
+            try:
+                stage_data[int(line[1])] = line
+            except ValueError:
+                break
+    # data = pd.read_csv('./data/damage.csv')
+    text = '本日推测进度/上小时进度' + '\n'
+    for clan in query_page(0):
+        damage_now = clan['damage']
+        grade_rank = clan['grade_rank']
+        damage_yesterday = int(data[grade_rank][-1])
+        damage_all = 0
+        for i in range(4, len(data[grade_rank])):
+            damage_all += int(data[grade_rank][i])
+        damage_today = damage_now - damage_all
+        try:
+            damage_stage = int(stage_data[grade_rank][-1]) - int(stage_data[grade_rank][-3])
+        except Exception:
+            damage_stage = 0
+        text += str(clan['rank']) + ': ' + clan['clan_name'] + '  ' + '{:.0%}'.format(damage_today/damage_yesterday) + '  ' + '{:.2%}'.format(damage_stage/damage_yesterday) + '\n'
+    chatid = str(update.effective_chat.id)
+    context.bot.send_message(chatid, text)
+
+
+if __name__ == "__main__":
+    damage_stage()
