@@ -142,7 +142,7 @@ def minus_damage(date_list, savefile: str):
 
 def damage_to_data():
     date_num = 0
-    date_list = ["1027", "1028", "1029", "1030", "1031"]
+    date_list = ["1125", "1126", "1127", "1128", "1129"]
     for date in date_list:
         if page_to_csv(date):
             date_num += 1
