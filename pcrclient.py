@@ -2,7 +2,6 @@ import requests
 import PCRPack as Pack
 import hashlib
 import random
-from nonebot import log
 
 
 class pcrclient:
@@ -73,15 +72,13 @@ class pcrclient:
     def login(self, uid, access_key):
         self.manifest = self.callapi('source_ini/get_maintenance_status', {}, False)
         ver = self.manifest["required_manifest_ver"]
-        log.logger.debug(str(self.manifest))
         self.default_headers["MANIFEST-VER"] = ver
-        log.logger.debug(str(self.callapi('tool/sdk_login', {"uid": uid, "access_key": access_key, "platform": self.default_headers["PLATFORM-ID"],
-                                                             "channel_id": self.default_headers["CHANNEL-ID"]})))
-        log.logger.debug(str(self.callapi('check/game_start', {"app_type": 0, "campaign_data": "", "campaign_user": random.randint(1, 1000000)})))
-        log.logger.debug(str(self.callapi("check/check_agreement", {})))
-        self.callapi("load/index", {"carrier": "HUAWEI"})
-        self.Home = self.callapi("home/index", {'message_id': 1, 'tips_id_list': [], 'is_first': 1, 'gold_history': 0})
-        log.logger.debug(str(self.Home))
+        self.callapi('tool/sdk_login', {"uid": uid, "access_key": access_key, "platform": self.default_headers["PLATFORM-ID"], "channel_id": self.default_headers["CHANNEL-ID"]})
+        self.callapi('check/game_start', {"app_type": 0, "campaign_data": "", "campaign_user": random.randint(1, 1000000)})
+        self.callapi("check/check_agreement", {})
+        self.callapi("load/index", {"carrier": "google"})
+        self.home = self.callapi("home/index", {'message_id': random.randint(1, 5000), 'tips_id_list': [], 'is_first': 1, 'gold_history': 0})
+        return self.home
 
 
 class ApiException(Exception):
