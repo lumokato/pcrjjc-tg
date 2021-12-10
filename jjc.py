@@ -7,7 +7,7 @@ from os.path import dirname, join, exists
 from json import load, dump
 import logging
 import csv
-from wechat import WeGroupChatBot
+from wechat import send_wechat
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -101,6 +101,7 @@ jjc：{res['user_info']["arena_rank"]}
 pjjc：{res['user_info']["grand_arena_rank"]}
 最后登录：{last_login_str}'''
         context.bot.send_message(update.effective_chat.id, text)
+        send_wechat(text)
     except ApiException as e:
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
@@ -205,15 +206,13 @@ def on_arena_schedule(context):
                 bot_text = f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}'
                 context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
                 # 添加企业微信提醒
-                Bot = WeGroupChatBot(cg.wechat_bot)
-                assert Bot.send_text(bot_text)
+                send_wechat(bot_text)
 
             if res[1] > last[1] and info['grand_arena_on']:
                 bot_text = f'pjjc：{last[1]}->{res[1]} ▼{res[1]-last[1]}'
                 context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
                 # 添加企业微信提醒
-                Bot = WeGroupChatBot(cg.wechat_bot)
-                assert Bot.send_text(bot_text)
+                send_wechat(bot_text)
         except ApiException as e:
             logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
             if e.code == 6:

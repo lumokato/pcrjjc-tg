@@ -51,6 +51,10 @@ class WeGroupChatBot(object):
                     )
 
 
+def send_wechat(bot_text):
+    Bot = WeGroupChatBot(cg.wechat_bot)
+    assert Bot.send_text(bot_text)
+
+
 if __name__ == '__main__':
-    bot = WeGroupChatBot(cg.wechat_bot)
-    assert bot.send_text('hello!')
+    send_wechat('hello!')
