@@ -7,6 +7,7 @@ from os.path import dirname, join, exists
 from json import load, dump
 import logging
 import csv
+from wechat import WeGroupChatBot
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -201,9 +202,18 @@ def on_arena_schedule(context):
             cache[user] = res
 
             if res[0] > last[0] and info['arena_on']:
-                context.bot.send_message(chat_id=int(info['chatid']), text=f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}')
+                bot_text = f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}'
+                context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
+                # 添加企业微信提醒
+                Bot = WeGroupChatBot(cg.wechat_bot)
+                assert Bot.send_text(bot_text)
+
             if res[1] > last[1] and info['grand_arena_on']:
-                context.bot.send_message(chat_id=int(info['chatid']), text=f'pjjc：{last[1]}->{res[1]} ▼{res[1]-last[1]}')
+                bot_text = f'pjjc：{last[1]}->{res[1]} ▼{res[1]-last[1]}'
+                context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
+                # 添加企业微信提醒
+                Bot = WeGroupChatBot(cg.wechat_bot)
+                assert Bot.send_text(bot_text)
         except ApiException as e:
             logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
             if e.code == 6:
