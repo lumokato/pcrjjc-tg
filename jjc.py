@@ -101,7 +101,7 @@ jjc：{res['user_info']["arena_rank"]}
 pjjc：{res['user_info']["grand_arena_rank"]}
 最后登录：{last_login_str}'''
         context.bot.send_message(update.effective_chat.id, text)
-        send_wechat(text)
+        # send_wechat(text)
     except ApiException as e:
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
