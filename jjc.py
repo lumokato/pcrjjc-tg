@@ -228,10 +228,10 @@ def start_schedule(update, context):
 
 
 def query_page(page: int):
-    temp = client.callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
+    temp = client.callapi('clan_battle/period_ranking', {'clan_id': 53, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
     if 'period_ranking' not in temp:
         client.login(cg.uid, cg.access_key)
-        temp = client.callapi('clan_battle/period_ranking', {'clan_id': 3, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
+        temp = client.callapi('clan_battle/period_ranking', {'clan_id': 53, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
     time.sleep(1)
     return temp['period_ranking']
 
