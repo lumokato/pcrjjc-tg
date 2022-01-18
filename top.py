@@ -3,23 +3,23 @@ import config as cg
 import time
 
 
-client = pcrclient(cg.viewer_id2)
-client.login(cg.uid2, cg.access_key)
+client2 = pcrclient(cg.viewer_id2)
+client2.login(cg.uid2, cg.access_key)
 
 
 def query(id: str):
-    res = client.callapi('/profile/get_profile', {
+    res = client2.callapi('/profile/get_profile', {
             'target_viewer_id': int(id)
         })
     if 'user_info' not in res:
-        client.login(cg.uid, cg.access_key)
-        res = client.callapi('/profile/get_profile', {
+        client2.login(cg.uid, cg.access_key)
+        res = client2.callapi('/profile/get_profile', {
             'target_viewer_id': int(id)})
     return res
 
 
 def query_ranking():
-    res = client.callapi('/arena/ranking', {'limit': 20, 'page': 1})
+    res = client2.callapi('/arena/ranking', {'limit': 20, 'page': 1})
     ranking_dict = {}
     if 'ranking' in res:
         for user in res['ranking']:
