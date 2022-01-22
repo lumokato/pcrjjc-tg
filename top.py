@@ -117,5 +117,35 @@ def on_query_ptop(update=None, context=None):
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
 
+def on_query_alist(update, context):
+    client = pcrclient(cg.avid)
+    client.login(cg.auid, cg.access_key)
+    try:
+        res = client.callapi('/arena/ranking', {'limit': 20, 'page': 1})
+        ranking_name = []
+        if 'ranking' in res:
+            for user in res['ranking']:
+                ranking_name.append(str(user['rank']) + '-' + user['user_name'])
+            text = f'''竞技场前20名:{'，'.join(ranking_name)}'''
+        context.bot.send_message(update.effective_chat.id, text)
+    except ApiException as e:
+        context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
+
+
+def on_query_plist(update, context):
+    client = pcrclient(cg.pvid)
+    client.login(cg.puid, cg.access_key)
+    try:
+        res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+        ranking_name = []
+        if 'ranking' in res:
+            for user in res['ranking']:
+                ranking_name.append(str(user['rank']) + '-' + user['user_name'])
+            text = f'''公主竞技场前20名:{'，'.join(ranking_name)}'''
+        context.bot.send_message(update.effective_chat.id, text)
+    except ApiException as e:
+        context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
+
+
 if __name__ == "__main__":
-    on_query_ptop()
+    on_query_alist()

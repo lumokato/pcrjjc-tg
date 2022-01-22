@@ -31,6 +31,8 @@ def main():
     dp.add_handler(CommandHandler('refresh', clan.refresh_damage, run_async=True))
     dp.add_handler(CommandHandler('atop', top.on_query_atop, run_async=True))
     dp.add_handler(CommandHandler('ptop', top.on_query_ptop, run_async=True))
+    dp.add_handler(CommandHandler('alist', top.on_query_alist, run_async=True))
+    dp.add_handler(CommandHandler('plist', top.on_query_plist, run_async=True))
     # dp.add_handler(CommandHandler('start', jjc.start_schedule, pass_job_queue=True))
     bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
     bot.job_queue.run_repeating(jjc.damage_stage, 1800, first="2022-12-21 8:01:00", last="2022-1-27 23:51:00")
