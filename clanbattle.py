@@ -1,13 +1,7 @@
-import requests
-import ast
-import hashlib
-import base64
-import random
 from pcrclient import pcrclient
-from nonebot import log
 import config as cg
 import pandas as pd
-import csv
+# import csv
 from datetime import datetime
 
 BOSS_LIFE_LIST = [[6000000, 8000000, 10000000, 12000000, 15000000], [6000000, 8000000, 10000000, 12000000, 15000000], [7000000, 9000000, 13000000, 15000000, 20000000], [15000000, 16000000, 18000000, 19000000, 20000000]]
@@ -71,7 +65,6 @@ class ClanBattle:
             temp = temp1[(rank - 1) % 10]
         else:
             temp = {}
-        log.logger.debug(str(temp))
         return process_data(temp)
 
     def get_page_data(self, page):
