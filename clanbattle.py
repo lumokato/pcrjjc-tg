@@ -91,7 +91,7 @@ def stage_data():
     App = ClanBattle(cg.avid, cg.auid, cg.access_key)
     # save_data = [['rank', 'clan_name', 'leader_name', 'member_num', 'damage', 'lap', 'boss_id', 'remain', 'grade_rank']]
     save_data = []
-    for page in range(30):
+    for page in range(15):
         temp = App.get_page_data(page)
         for status in temp:
             save_data.append([status['rank'], status['clan_name'], status['leader_name'], status['member_num'], status['damage'], status['lap'], status['boss_id'], status['remain'], status['grade_rank']])
