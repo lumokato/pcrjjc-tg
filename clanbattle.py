@@ -88,7 +88,7 @@ class ClanBattle:
 
 
 def stage_data():
-    App = ClanBattle(cg.avid, cg.auid, cg.access_key)
+    App = ClanBattle(cg.pvid, cg.puid, cg.access_key)
     # save_data = [['rank', 'clan_name', 'leader_name', 'member_num', 'damage', 'lap', 'boss_id', 'remain', 'grade_rank']]
     save_data = []
     for page in range(15):
