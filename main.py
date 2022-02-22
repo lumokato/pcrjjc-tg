@@ -4,6 +4,7 @@ import logging
 import jjc
 import infedg as clan
 import top
+import clanbattle
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -35,9 +36,8 @@ def main():
     dp.add_handler(CommandHandler('plist', top.on_query_plist, run_async=True))
     # dp.add_handler(CommandHandler('start', jjc.start_schedule, pass_job_queue=True))
     bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
-    bot.job_queue.run_repeating(jjc.damage_stage, 1800, first="2022-01-21 8:01:00", last="2022-01-27 23:51:00")
+    bot.job_queue.run_repeating(clanbattle.stage_data, 1800, first="2022-01-21 8:01:00", last="2022-02-27 23:51:00")
     bot.job_queue.run_repeating(top.on_query_ptop, 86400, first="2022-01-18 14:40:00", last="2022-12-30 23:01:00")
-
     bot.start_polling()
 
 
