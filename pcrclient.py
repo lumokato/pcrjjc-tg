@@ -32,7 +32,7 @@ class pcrclient:
             "REGION-CODE": "",
             "RES-KEY": "d145b29050641dac2f8b19df0afe0e59",
             "RES-VER": "10002200",
-            "SHORT-UDID": "0",
+            "SHORT-UDID": "1001341751",
             "Connection": "Keep-Alive"}
         self.conn = requests.session()
 
