@@ -4,7 +4,6 @@ import logging
 import jjc
 import infedg as clan
 import top
-import clanbattle
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)

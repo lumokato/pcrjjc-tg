@@ -1,4 +1,4 @@
-from pcrclient import pcrclient, ApiException
+from pcrclient import PCRClient, ApiException
 import config as cg
 import time
 from os.path import dirname, join, exists
@@ -52,7 +52,7 @@ def query_pranking(client):
 
 def on_query_atop(update, context):
     # chatid = str(update.effective_chat.id)
-    client = pcrclient(cg.avid)
+    client = PCRClient(cg.avid)
     client.login(cg.auid, cg.access_key)
     try:
         top_dict = query_ranking(client)
@@ -88,7 +88,7 @@ def on_query_ptop(update=None, context=None):
         for user in bind_cache:
             info = bind_cache[user]
             chat_id = int(info['chatid'])
-    client = pcrclient(cg.pvid)
+    client = PCRClient(cg.pvid)
     client.login(cg.puid, cg.access_key)
 
     try:
@@ -118,7 +118,7 @@ def on_query_ptop(update=None, context=None):
 
 
 def on_query_alist(update, context):
-    client = pcrclient(cg.avid)
+    client = PCRClient(cg.avid)
     client.login(cg.auid, cg.access_key)
     try:
         res = client.callapi('/arena/ranking', {'limit': 20, 'page': 1})
@@ -133,7 +133,7 @@ def on_query_alist(update, context):
 
 
 def on_query_plist(update, context):
-    client = pcrclient(cg.pvid)
+    client = PCRClient(cg.pvid)
     client.login(cg.puid, cg.access_key)
     try:
         res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})

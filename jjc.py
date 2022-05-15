@@ -1,4 +1,4 @@
-from pcrclient import pcrclient, ApiException
+from pcrclient import PCRClient, ApiException
 import config as cg
 from copy import deepcopy
 from traceback import format_exc
@@ -45,7 +45,7 @@ if exists(config):
 binds = root['arena_bind']
 
 cache = {}
-client = pcrclient(cg.viewer_id)
+client = PCRClient(cg.viewer_id)
 client.login(cg.uid, cg.access_key)
 
 
