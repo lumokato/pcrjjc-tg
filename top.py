@@ -4,6 +4,7 @@ import time
 from os.path import dirname, join, exists
 from json import load, dump
 from copy import deepcopy
+from wechat import send_wechat
 
 
 curpath = dirname(__file__)
@@ -20,6 +21,8 @@ binds = root['arena_bind']
 
 cache = {}
 
+client = PCRClient(cg.pvid)
+client.login(cg.puid, cg.access_key)
 
 def query(client, id: str):
     res = client.callapi('/profile/get_profile', {
@@ -88,8 +91,8 @@ def on_query_ptop(update=None, context=None):
         for user in bind_cache:
             info = bind_cache[user]
             chat_id = int(info['chatid'])
-    client = PCRClient(cg.pvid)
-    client.login(cg.puid, cg.access_key)
+    # client = PCRClient(cg.pvid)
+    # client.login(cg.puid, cg.access_key)
 
     try:
         top_dict = query_pranking(client)
@@ -133,8 +136,8 @@ def on_query_alist(update, context):
 
 
 def on_query_plist(update, context):
-    client = PCRClient(cg.pvid)
-    client.login(cg.puid, cg.access_key)
+    # client = PCRClient(cg.pvid)
+    # client.login(cg.puid, cg.access_key)
     try:
         res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         ranking_name = []
@@ -147,5 +150,39 @@ def on_query_plist(update, context):
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
 
+def on_query_pwild(context):
+    try:
+        with open('wild.json', encoding='utf-8') as fp:
+            group_user = load(fp)
+        res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+        if 'ranking' not in res:
+            client.login(cg.puid, cg.access_key)
+            res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+        user_wild = []
+        wild_flag = 0
+        write_flag = 0
+        if 'ranking' in res:
+            for user in res['ranking']:
+                if str(user['viewer_id']) not in group_user["group"] and user['rank'] < 11:
+                    wild_flag = 1
+                    if str(user['viewer_id']) not in group_user["wild"]:
+                        write_flag = 1
+                        group_user['wild'][str(user['viewer_id'])] = user['user_name']
+                        user_wild.append(str(user['rank']) + '-' + user['user_name'])
+            if not wild_flag and group_user["wild"]:
+                write_flag = 1
+                group_user["wild"] = {}
+        if write_flag:
+            with open('wild.json', 'w', encoding='utf-8') as fp:
+                dump(group_user, fp, indent=4, ensure_ascii=False)
+        if user_wild:
+            bot_text = f'''注意:{', '.join(user_wild)}'''
+            # 企业微信提醒
+            # print(bot_text)
+            send_wechat(bot_text)
+    except ApiException:
+        pass
+
+
 if __name__ == "__main__":
-    on_query_alist()
+    on_query_pwild(0)
