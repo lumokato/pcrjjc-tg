@@ -27,13 +27,13 @@ def main():
     dp.add_handler(CommandHandler('del', jjc.delete_arena_sub, run_async=True))
     dp.add_handler(CommandHandler('status', jjc.send_arena_sub_status, run_async=True))
     dp.add_handler(CommandHandler('rate', jjc.damage_percentage_stage, run_async=True))
-    dp.add_handler(CommandHandler('aa', top.on_query_atop, run_async=True))
+    # dp.add_handler(CommandHandler('aa', top.on_query_atop, run_async=True))
     dp.add_handler(CommandHandler('pp', top.on_query_ptop, run_async=True))
-    dp.add_handler(CommandHandler('a', top.on_query_alist, run_async=True))
+    # dp.add_handler(CommandHandler('a', top.on_query_alist, run_async=True))
     dp.add_handler(CommandHandler('p', top.on_query_plist, run_async=True))
     # dp.add_handler(CommandHandler('start', jjc.start_schedule, pass_job_queue=True))
     bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
-    bot.job_queue.run_repeating(top.on_query_pwild, 60)
+    bot.job_queue.run_repeating(top.on_query_pwild, 47)
     bot.start_polling()
 
 
