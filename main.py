@@ -36,9 +36,9 @@ def main():
     # dp.add_handler(CommandHandler('start', jjc.start_schedule, pass_job_queue=True))
     bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
 
-    scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-    scheduler.add_job(top.on_query_pwild, 'cron', second='55', max_instances=4)
-    # bot.job_queue.run_repeating(top.on_query_pwild, 60)
+    # scheduler = BlockingScheduler(timezone="Asia/Shanghai")
+    # scheduler.add_job(top.on_query_pwild, 'cron', second='55', max_instances=4)
+    bot.job_queue.run_repeating(top.on_query_pwild, 60, max_instances=4)
     bot.start_polling()
     _error_log_file = os.path.expanduser('./error.txt')
     error_handler = logging.FileHandler(_error_log_file, encoding='utf8')
