@@ -37,7 +37,7 @@ def main():
     bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
 
     scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-    scheduler.add_job(top.on_query_pwild, 'cron', seconds='55', max_instances=4)
+    scheduler.add_job(top.on_query_pwild, 'cron', second='55', max_instances=4)
     # bot.job_queue.run_repeating(top.on_query_pwild, 60)
     bot.start_polling()
     _error_log_file = os.path.expanduser('./error.txt')
