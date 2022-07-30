@@ -34,11 +34,11 @@ def main():
     # dp.add_handler(CommandHandler('a', top.on_query_alist, run_async=True))
     dp.add_handler(CommandHandler('p', top.on_query_plist, run_async=True))
     # dp.add_handler(CommandHandler('start', jjc.start_schedule, pass_job_queue=True))
-    bot.job_queue.run_repeating(jjc.on_arena_schedule, 30)
+    bot.job_queue.run_repeating(jjc.on_arena_schedule, 30, job_kwargs={'max_instances': 20})
 
     # scheduler = BlockingScheduler(timezone="Asia/Shanghai")
     # scheduler.add_job(top.on_query_pwild, 'cron', second='55', max_instances=4)
-    bot.job_queue.run_repeating(top.on_query_pwild, 60, job_kwargs={'max_instances': 20})
+    bot.job_queue.run_repeating(top.on_query_pwild, 60, 15, job_kwargs={'max_instances': 20})
     bot.start_polling()
     _error_log_file = os.path.expanduser('./error.txt')
     error_handler = logging.FileHandler(_error_log_file, encoding='utf8')
