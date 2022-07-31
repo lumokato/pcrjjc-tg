@@ -56,5 +56,10 @@ def send_wechat(bot_text):
     assert Bot.send_text(bot_text)
 
 
+def send_wechat2(bot_text):
+    Bot = WeGroupChatBot(cg.wechat_bot2)
+    assert Bot.send_text(bot_text)
+
+
 if __name__ == '__main__':
     send_wechat('hello!')

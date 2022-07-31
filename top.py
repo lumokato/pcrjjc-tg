@@ -4,7 +4,7 @@ import time
 from os.path import dirname, join, exists
 from json import load, dump
 from copy import deepcopy
-from wechat import send_wechat
+from wechat import send_wechat2
 
 
 curpath = dirname(__file__)
@@ -186,7 +186,7 @@ def on_query_pwild(context):
             bot_text = f'''注意:{', '.join(user_wild)}'''
             # 企业微信提醒
             # print(bot_text)
-            send_wechat(bot_text)
+            send_wechat2(bot_text)
     except ApiException:
         pass
 
