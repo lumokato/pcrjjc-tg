@@ -187,8 +187,9 @@ def on_query_pwild(context):
             # 企业微信提醒
             # print(bot_text)
             send_wechat2(bot_text)
-    except ApiException:
-        pass
+        return True
+    except Exception:
+        return False
 
 
 if __name__ == "__main__":
