@@ -7,7 +7,7 @@ import top
 
 
 def main():
-    bot = Updater(token=cg.TOKEN, request_kwargs={'proxy_url': cg.proxy_url}, use_context=True)
+    bot = Updater(token=cg.TOKEN2, request_kwargs={'proxy_url': cg.proxy_url}, use_context=True)
     dp = bot.dispatcher
     dp.add_handler(CommandHandler('pp', top.on_query_ptop, run_async=True))
     dp.add_handler(CommandHandler('p', top.on_query_plist, run_async=True))
