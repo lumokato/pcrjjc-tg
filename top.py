@@ -5,6 +5,14 @@ from os.path import dirname, join, exists
 from json import load, dump
 from copy import deepcopy
 from wechat import send_wechat2
+import logging
+
+
+root = logging.getLogger()
+root.setLevel(logging.INFO)
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 curpath = dirname(__file__)
@@ -161,6 +169,8 @@ def on_query_pwild(context):
     try:
         with open('wild.json', encoding='utf-8') as fp:
             group_user = load(fp)
+        logger.info('querying grand arena top')
+
         res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         if 'ranking' not in res:
             pclient.login(cg.puid, cg.access_key)
@@ -187,9 +197,8 @@ def on_query_pwild(context):
             # 企业微信提醒
             # print(bot_text)
             send_wechat2(bot_text)
-        return True
     except Exception:
-        return False
+        logger.info('查询出错\n')
 
 
 if __name__ == "__main__":
