@@ -15,5 +15,5 @@ def main():
 if __name__ == '__main__':
     main()
     scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-    scheduler.add_job(top.on_query_pwild, 'cron', second='30', job_kwargs={'max_instances': 100})
+    scheduler.add_job(top.on_query_pwild, 'cron', second='30', max_instances=100)
     scheduler.start()

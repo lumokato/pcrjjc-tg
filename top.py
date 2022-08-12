@@ -202,4 +202,4 @@ def on_query_pwild():
 
 
 if __name__ == "__main__":
-    on_query_pwild(0)
+    on_query_pwild()
