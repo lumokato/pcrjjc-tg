@@ -165,7 +165,7 @@ def on_query_plist(update, context):
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
 
-def on_query_pwild(context):
+def on_query_pwild():
     try:
         with open('wild.json', encoding='utf-8') as fp:
             group_user = load(fp)
