@@ -1,7 +1,5 @@
 *.json
 __pycache__/*
-.idea/
-config.py
 data/
 *.csv
 *.txt

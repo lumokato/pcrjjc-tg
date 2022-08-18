@@ -1,0 +1,21 @@
+{
+    "tgbot": {
+        "TOKEN1": "",
+        "TOKEN2": "",
+        "proxy_url": ""
+    },
+    "wechat": {
+        "bot1": "",
+        "bot2": ""
+    },
+    "jjc": {
+        "viewer_id": 0,
+        "uid": "",
+        "access_key": ""
+    },
+    "top": {
+        "viewer_id": 0,
+        "uid": "",
+        "access_key": ""
+    }
+}

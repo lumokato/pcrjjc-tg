@@ -1,7 +1,10 @@
 import requests
 from requests import HTTPError
 from six import string_types
-import config as cg
+from json import load
+
+with open('account.json', encoding='utf-8') as fp:
+    wechat_bot = load(fp)['wechat']
 
 
 def send(bot_key, msg_type, **body):
@@ -52,12 +55,12 @@ class WeGroupChatBot(object):
 
 
 def send_wechat(bot_text):
-    Bot = WeGroupChatBot(cg.wechat_bot)
+    Bot = WeGroupChatBot(wechat_bot["bot1"])
     assert Bot.send_text(bot_text)
 
 
 def send_wechat2(bot_text):
-    Bot = WeGroupChatBot(cg.wechat_bot2)
+    Bot = WeGroupChatBot(wechat_bot["bot2"])
     assert Bot.send_text(bot_text)
 
 

@@ -1,5 +1,4 @@
 from pcrclient import PCRClient, ApiException
-import config as cg
 from copy import deepcopy
 from traceback import format_exc
 import time
@@ -8,6 +7,9 @@ from json import load, dump
 import logging
 import csv
 from wechat import send_wechat
+
+with open('account.json', encoding='utf-8') as fp:
+    jjc_account = load(fp)['jjc']
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -45,8 +47,8 @@ if exists(config):
 binds = root['arena_bind']
 
 cache = {}
-client = PCRClient(cg.viewer_id)
-client.login(cg.uid, cg.access_key)
+client = PCRClient(jjc_account["viewer_id"])
+client.login(jjc_account["uid"], jjc_account["access_key"])
 
 
 def query(id: str):
@@ -54,7 +56,7 @@ def query(id: str):
             'target_viewer_id': int(id)
         })
     if 'user_info' not in res:
-        client.login(cg.uid, cg.access_key)
+        client.login(jjc_account["uid"], jjc_account["access_key"])
         res = client.callapi('/profile/get_profile', {
             'target_viewer_id': int(id)})
     return res
@@ -230,7 +232,7 @@ def start_schedule(update, context):
 def query_page(page: int):
     temp = client.callapi('clan_battle/period_ranking', {'clan_id': 53, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
     if 'period_ranking' not in temp:
-        client.login(cg.uid, cg.access_key)
+        client.login(jjc_account["uid"], jjc_account["access_key"])
         temp = client.callapi('clan_battle/period_ranking', {'clan_id': 53, 'clan_battle_id': -1, 'period': -1, 'month': 0, 'page': page, 'is_my_clan': 0, 'is_first': 1})
     time.sleep(1)
     return temp['period_ranking']
