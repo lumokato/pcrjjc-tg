@@ -7,7 +7,7 @@ with open('account.json', encoding='utf-8') as fp:
 
 
 def main():
-    bot = Updater(token=tgbot["TOKEN"], request_kwargs={'proxy_url': tgbot["proxy_url"]}, use_context=True)
+    bot = Updater(token=tgbot["TOKEN1"], request_kwargs={'proxy_url': tgbot["proxy_url"]}, use_context=True)
     dp = bot.dispatcher
     dp.add_handler(CommandHandler('query', jjc.on_query_arena, run_async=True))
     dp.add_handler(CommandHandler('q', jjc.on_query_arena_all, run_async=True))
