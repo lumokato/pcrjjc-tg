@@ -25,5 +25,5 @@ if __name__ == '__main__':
     main()
     scheduler = BlockingScheduler(timezone="Asia/Shanghai")
     scheduler.add_job(top.on_query_pwild, id='query', trigger='cron', second='30', max_instances=100)
-    scheduler.add_job(refresh_daily, 'cron', hour='3', max_instances=100, args=[scheduler])
+    # scheduler.add_job(refresh_daily, 'cron', hour='3', max_instances=100, args=[scheduler])
     scheduler.start()
