@@ -139,7 +139,7 @@ def on_query_pwild():
         write_flag = 0
         if 'ranking' in res:
             for user in res['ranking']:
-                if str(user['viewer_id']) not in group_user["group"] and user['rank'] < 7:
+                if str(user['viewer_id']) not in group_user["group"] and user['rank'] < 8:
                     wild_flag = 1
                     if str(user['viewer_id']) not in group_user["wild"]:
                         write_flag = 1
