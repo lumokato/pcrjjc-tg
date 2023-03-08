@@ -189,40 +189,51 @@ def send_arena_sub_status(update, context):
 
 
 def on_arena_schedule(context):
+    time0 = time.time()
     global cache, binds
     bind_cache = {}
     bind_cache = deepcopy(binds)
-    for user in bind_cache:
-        info = bind_cache[user]
-        try:
-            logger.info(f'querying {info["id"]} for {info["chatid"]}')
-            res = query(info['id'])
-            res = (res['user_info']['arena_rank'], res['user_info']['grand_arena_rank'])
-            if user not in cache:
+    t = time.localtime()
+    if (t.tm_hour, t.tm_min) in [(15, 49), (15,50)]:
+        loop = 1
+    else:
+        loop = 0
+    while time.time() - time0 < 29:
+        for user in bind_cache:
+            info = bind_cache[user]
+            try:
+                logger.info(f'querying {info["id"]} for {info["chatid"]}')
+                res = query(info['id'])
+                res = (res['user_info']['arena_rank'], res['user_info']['grand_arena_rank'])
+                if user not in cache:
+                    cache[user] = res
+                    continue
+                last = cache[user]
                 cache[user] = res
-                continue
-            last = cache[user]
-            cache[user] = res
 
-            if res[0] > last[0] and info['arena_on']:
-                bot_text = f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}'
-                context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
-                # 添加企业微信提醒
-                send_wechat(bot_text)
+                if res[0] > last[0] and info['arena_on']:
+                    bot_text = f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}'
+                    context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
+                    # 添加企业微信提醒
+                    send_wechat(bot_text)
 
-            if res[1] > last[1] and info['grand_arena_on']:
-                bot_text = f'pjjc：{last[1]}->{res[1]} ▼{res[1]-last[1]}'
-                context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
-                # 添加企业微信提醒
-                send_wechat(bot_text)
-        except ApiException as e:
-            logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
-            if e.code == 6:
-                binds.pop(user)
-                save_binds()
-        except Exception:
-            logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
-
+                if res[1] > last[1] and info['grand_arena_on']:
+                    bot_text = f'pjjc：{last[1]}->{res[1]} ▼{res[1]-last[1]}'
+                    context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
+                    # 添加企业微信提醒
+                    send_wechat(bot_text)
+            except ApiException as e:
+                logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
+                if e.code == 6:
+                    binds.pop(user)
+                    save_binds()
+            except Exception:
+                logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
+        # time1 = time.time()
+        # print(time1 - time0)
+        if not loop:
+            break
+        time.sleep(2)
 
 def start_schedule(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='开启定时')
