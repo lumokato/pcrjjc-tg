@@ -194,7 +194,7 @@ def on_arena_schedule(context):
     bind_cache = {}
     bind_cache = deepcopy(binds)
     t = time.localtime()
-    if (t.tm_hour, t.tm_min) in [(15, 49), (15,50)]:
+    if (t.tm_hour, t.tm_min) in [(14, 58), (14,59)]:
         loop = 1
     else:
         loop = 0
