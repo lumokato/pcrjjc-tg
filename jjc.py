@@ -194,8 +194,16 @@ def on_arena_schedule(context):
     bind_cache = {}
     bind_cache = deepcopy(binds)
     t = time.localtime()
-    if (t.tm_hour, t.tm_min) in [(14, 58), (14,59)]:
-        loop = 1
+    if t.tm_hour == 14:
+        if t.tm_min == 58:
+            loop = 2
+        elif t.tm_min == 59:
+            if t.tm_sec > 30:
+                loop = 0.5
+            else:
+                loop = 1
+        else:
+            loop = 0
     else:
         loop = 0
     while time.time() - time0 < 29:
@@ -233,7 +241,7 @@ def on_arena_schedule(context):
         # print(time1 - time0)
         if not loop:
             break
-        time.sleep(2)
+        time.sleep(loop)
 
 def start_schedule(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='开启定时')
