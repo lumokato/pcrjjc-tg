@@ -111,43 +111,43 @@ pjjc：{res['user_info']["grand_arena_rank"]}
 def on_query_arena_all(update, context):
     global binds
     try:
-        id = context.args[0]
+        id_query = context.args[0]
     except IndexError:
         chatid = str(update.effective_chat.id)
         if chatid not in binds:
             context.bot.send_message(chatid, '未绑定竞技场')
             return
         else:
-            id = binds[chatid]['id']
+            id_query = binds[chatid]['id']
     try:
-        res = query(id)
-        arena_time = int(res['user_info']['arena_time'])
-        arena_date = time.localtime(arena_time)
-        arena_str = time.strftime('%Y-%m-%d', arena_date)
+        res_query = query(id_query)
+        arena_time_query = int(res_query['user_info']['arena_time'])
+        arena_date_query = time.localtime(arena_time_query)
+        arena_str_query = time.strftime('%Y-%m-%d', arena_date_query)
 
-        grand_arena_time = int(res['user_info']['grand_arena_time'])
-        grand_arena_date = time.localtime(grand_arena_time)
-        grand_arena_str = time.strftime('%Y-%m-%d', grand_arena_date)
+        grand_arena_time_query = int(res_query['user_info']['grand_arena_time'])
+        grand_arena_date_query = time.localtime(grand_arena_time_query)
+        grand_arena_str_query = time.strftime('%Y-%m-%d', grand_arena_date_query)
 
-        last_login_time = int(res['user_info']['last_login_time'])
-        last_login_date = time.localtime(last_login_time)
-        last_login_str = time.strftime('%Y-%m-%d %H:%M:%S', last_login_date)
-        text = f'''id：{res['user_info']["viewer_id"]}
-昵称：{res['user_info']["user_name"]}
-公会：{res["clan_name"]}
-简介：{res['user_info']["user_comment"]}
-最后登录：{last_login_str}
-jjc：{res['user_info']["arena_rank"]}
-pjjc：{res['user_info']["grand_arena_rank"]}
-战力：{res['user_info']["total_power"]}
-等级：{res['user_info']["team_level"]}
-jjc场次：{res['user_info']["arena_group"]}
-jjc创建日：{arena_str}
-pjjc场次：{res['user_info']["grand_arena_group"]}
-pjjc创建日：{grand_arena_str}
-角色数：{res['user_info']["unit_num"]}
+        last_login_time_query = int(res_query['user_info']['last_login_time'])
+        last_login_date_query = time.localtime(last_login_time_query)
+        last_login_str_query = time.strftime('%Y-%m-%d %H:%M:%S', last_login_date_query)
+        text_query = f'''id：{res_query['user_info']["viewer_id"]}
+昵称：{res_query['user_info']["user_name"]}
+公会：{res_query["clan_name"]}
+简介：{res_query['user_info']["user_comment"]}
+最后登录：{last_login_str_query}
+jjc：{res_query['user_info']["arena_rank"]}
+pjjc：{res_query['user_info']["grand_arena_rank"]}
+战力：{res_query['user_info']["total_power"]}
+等级：{res_query['user_info']["team_level"]}
+jjc场次：{res_query['user_info']["arena_group"]}
+jjc创建日：{arena_str_query}
+pjjc场次：{res_query['user_info']["grand_arena_group"]}
+pjjc创建日：{grand_arena_str_query}
+角色数：{res_query['user_info']["unit_num"]}
 '''
-        context.bot.send_message(update.effective_chat.id, text)
+        context.bot.send_message(update.effective_chat.id, text_query)
     except ApiException as e:
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
