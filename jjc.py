@@ -196,12 +196,12 @@ def on_arena_schedule(context):
     t = time.localtime()
     if t.tm_hour == 14:
         if t.tm_min == 58:
-            loop = 2
+            loop = 10
         elif t.tm_min == 59:
             if t.tm_sec > 30:
                 loop = 0.5
             else:
-                loop = 1
+                loop = 5
         else:
             loop = 0
     else:
