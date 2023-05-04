@@ -55,13 +55,18 @@ class WeGroupChatBot(object):
 
 
 def send_wechat(bot_text):
-    Bot = WeGroupChatBot(wechat_bot["bot1"])
-    assert Bot.send_text(bot_text)
+    bot1 = WeGroupChatBot(wechat_bot["bot1"])
+    assert bot1.send_text(bot_text)
 
 
 def send_wechat2(bot_text):
-    Bot = WeGroupChatBot(wechat_bot["bot2"])
-    assert Bot.send_text(bot_text)
+    bot2 = WeGroupChatBot(wechat_bot["bot2"])
+    assert bot2.send_text(bot_text)
+
+
+def send_wechat3(bot_text):
+    bot3 = WeGroupChatBot(wechat_bot["bot3"])
+    assert bot3.send_text(bot_text)
 
 
 if __name__ == '__main__':
