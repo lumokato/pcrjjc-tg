@@ -25,6 +25,14 @@ def hide_process(update=None, context=None):
                     msg = '已隐身第' + str(user_rank)+'名, 时间为'+time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
                 else:
                     msg = '处理错误'
+        if msg == '未找到成员':
+            hide_apply = hclient.callapi('/grand_arena/apply',
+                                         {'battle_viewer_id': hide_user['vid'], 'opponent_rank': hide_user['rank']})
+            if not hide_apply:
+                msg = '已强制隐身第' + str(user_rank) + '名, 时间为' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+            else:
+                msg = '处理错误'
+
     if update:
         context.bot.send_message(update.effective_chat.id, msg)
     send_wechat3(msg)
