@@ -26,8 +26,9 @@ def hide_process(update=None, context=None):
                 else:
                     msg = '处理错误'
         if msg == '未找到成员':
+            grand_info = hclient.callapi('/grand_arena/search', {})
             hide_apply = hclient.callapi('/grand_arena/apply',
-                                         {'battle_viewer_id': hide_user['vid'], 'opponent_rank': hide_user['rank']})
+                                         {'battle_viewer_id': int(hide_user['vid']), 'opponent_rank': int(hide_user['rank'])})
             if not hide_apply:
                 msg = '已强制隐身第' + str(user_rank) + '名, 时间为' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
             else:
