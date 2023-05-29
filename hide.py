@@ -30,7 +30,7 @@ def hide_process(update=None, context=None):
             hide_apply = hclient.callapi('/grand_arena/apply',
                                          {'battle_viewer_id': int(hide_user['vid']), 'opponent_rank': int(hide_user['rank'])})
             if not hide_apply:
-                msg = '已强制隐身第' + str(user_rank) + '名, 时间为' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+                msg = '已强制隐身第' + str(hide_user['rank']) + '名, 时间为' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
             else:
                 msg = '处理错误'
 
