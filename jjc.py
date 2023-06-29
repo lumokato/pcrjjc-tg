@@ -193,19 +193,21 @@ def on_arena_schedule(context):
     global cache, binds
     bind_cache = {}
     bind_cache = deepcopy(binds)
-    t = time.localtime()
-    if t.tm_hour == 14:
-        if t.tm_min == 58:
-            loop = 10
-        elif t.tm_min == 59:
-            if t.tm_sec > 30:
-                loop = 0.5
-            else:
-                loop = 5
-        else:
-            loop = 0
-    else:
-        loop = 0
+    loop = 0
+    # 15点前修改查询频率
+    # t = time.localtime()
+    # if t.tm_hour == 14:
+    #     if t.tm_min == 58:
+    #         loop = 10
+    #     elif t.tm_min == 59:
+    #         if t.tm_sec > 30:
+    #             loop = 0.5
+    #         else:
+    #             loop = 5
+    #     else:
+    #         loop = 0
+    # else:
+    #     loop = 0
     while time.time() - time0 < 29:
         for user in bind_cache:
             info = bind_cache[user]
@@ -221,15 +223,17 @@ def on_arena_schedule(context):
 
                 if res[0] > last[0] and info['arena_on']:
                     bot_text = f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}'
-                    context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
+                    if info['chatid']:
+                        context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
                     # 添加企业微信提醒
-                    send_wechat(bot_text)
+                    send_wechat(bot_text, info['bot_key'])
 
                 if res[1] > last[1] and info['grand_arena_on']:
                     bot_text = f'pjjc：{last[1]}->{res[1]} ▼{res[1]-last[1]}'
-                    context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
+                    if info['chatid']:
+                        context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
                     # 添加企业微信提醒
-                    send_wechat(bot_text)
+                    send_wechat(bot_text, info['bot_key'])
             except ApiException as e:
                 logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
                 if e.code == 6:

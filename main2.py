@@ -25,6 +25,6 @@ def refresh_daily(scheduler):
 if __name__ == '__main__':
     main()
     scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-    scheduler.add_job(top.on_query_pwild, id='query', trigger='cron', second='30', max_instances=100)
+    # scheduler.add_job(top.on_query_pwild, id='query', trigger='cron', second='30', max_instances=100)
     scheduler.add_job(hide.hide_process, id='hide', trigger='cron', hour='14', minute='54')
     scheduler.start()

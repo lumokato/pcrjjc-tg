@@ -54,9 +54,9 @@ class WeGroupChatBot(object):
                     )
 
 
-def send_wechat(bot_text):
-    bot1 = WeGroupChatBot(wechat_bot["bot1"])
-    assert bot1.send_text(bot_text)
+def send_wechat(bot_text, bot_key):
+    bot = WeGroupChatBot(bot_key)
+    assert bot.send_text(bot_text)
 
 
 def send_wechat2(bot_text):
