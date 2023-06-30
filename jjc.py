@@ -241,8 +241,8 @@ def on_arena_schedule(context):
                     save_binds()
             except Exception:
                 logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
-        # time1 = time.time()
-        # print(time1 - time0)
+        time1 = time.time()
+        print(time1 - time0)
         if not loop:
             break
         time.sleep(loop)
