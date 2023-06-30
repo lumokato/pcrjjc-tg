@@ -242,7 +242,7 @@ def on_arena_schedule(context):
             except Exception:
                 logger.info(f'对{info["id"]}的检查出错\n{format_exc()}')
         time1 = time.time()
-        print(time1 - time0)
+        logger.info(f'querying time {str(time1)}')
         if not loop:
             break
         time.sleep(loop)
