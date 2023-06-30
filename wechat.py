@@ -59,15 +59,5 @@ def send_wechat(bot_text, bot_key):
     assert bot.send_text(bot_text)
 
 
-def send_wechat2(bot_text):
-    bot2 = WeGroupChatBot(wechat_bot["bot2"])
-    assert bot2.send_text(bot_text)
-
-
-def send_wechat3(bot_text):
-    bot3 = WeGroupChatBot(wechat_bot["bot3"])
-    assert bot3.send_text(bot_text)
-
-
 if __name__ == '__main__':
     send_wechat('hello!')

@@ -1,13 +1,14 @@
 from pcrclient import PCRClient
 import time
 from json import load
-from wechat import send_wechat3
+from wechat import send_wechat
 
 
 with open('account.json', encoding='utf-8') as fp:
     load_data = load(fp)
     hide_account = load_data['hide']
     hide_user = load_data['hide_user']
+    wechat_bot = load_data['wechat']
 
 
 def hide_process(update=None, context=None):
@@ -36,7 +37,7 @@ def hide_process(update=None, context=None):
 
     if update:
         context.bot.send_message(update.effective_chat.id, msg)
-    send_wechat3(msg)
+    send_wechat(msg, wechat_bot["bot3"])
 
 
 if __name__ == '__main__':

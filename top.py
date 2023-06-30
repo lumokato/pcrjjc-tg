@@ -3,11 +3,12 @@ import time
 from os.path import dirname, join, exists
 from json import load, dump
 from copy import deepcopy
-from wechat import send_wechat2
+from wechat import send_wechat
 import logging
 
 with open('account.json', encoding='utf-8') as fp:
     top_account = load(fp)['top']
+    wechat_bot = load(fp)['wechat']
 
 
 root = logging.getLogger()
@@ -120,6 +121,7 @@ def on_query_plist(update, context):
                 ranking_name.append(str(user['rank']) + '-' + user['user_name'])
             text = f'''公主竞技场前20名:{', '.join(ranking_name)}'''
         context.bot.send_message(update.effective_chat.id, text)
+        send_wechat(bot_text, wechat_bot["bot2"])
     except ApiException as e:
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
@@ -154,8 +156,7 @@ def on_query_pwild():
         if user_wild:
             bot_text = f'''注意:{', '.join(user_wild)}'''
             # 企业微信提醒
-            # print(bot_text)
-            send_wechat2(bot_text)
+            send_wechat(bot_text, wechat_bot["bot2"])
     except Exception:
         logger.info('查询出错\n')
 
