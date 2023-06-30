@@ -122,7 +122,7 @@ def on_query_plist(update, context):
                 ranking_name.append(str(user['rank']) + '-' + user['user_name'])
             text = f'''公主竞技场前20名:{', '.join(ranking_name)}'''
         context.bot.send_message(update.effective_chat.id, text)
-        send_wechat(text, wechat_bot["bot1"])
+        # send_wechat(text, wechat_bot["bot1"])
     except ApiException as e:
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 

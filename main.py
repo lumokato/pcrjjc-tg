@@ -17,7 +17,7 @@ def main():
     dp.add_handler(CommandHandler('del', jjc.delete_arena_sub, run_async=True))
     dp.add_handler(CommandHandler('status', jjc.send_arena_sub_status, run_async=True))
     dp.add_handler(CommandHandler('rate', jjc.damage_percentage_stage, run_async=True))
-    bot.job_queue.run_repeating(jjc.on_arena_schedule, 30, job_kwargs={'max_instances': 3})
+    bot.job_queue.run_repeating(jjc.on_arena_schedule, 30, job_kwargs={'max_instances': 30})
     bot.start_polling()
 
 
