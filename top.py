@@ -7,8 +7,9 @@ from wechat import send_wechat
 import logging
 
 with open('account.json', encoding='utf-8') as fp:
-    top_account = load(fp)['top']
-    wechat_bot = load(fp)['wechat']
+    load_data = load(fp)
+    top_account = load_data['top']
+    wechat_bot = load_data['wechat']
 
 
 root = logging.getLogger()
