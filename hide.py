@@ -11,7 +11,7 @@ with open('account.json', encoding='utf-8') as fp:
     wechat_bot = load_data['wechat']
 
 
-def hide_process(hide_rank, update=None, context=None):
+def hide_process(hide_rank="2", update=None, context=None):
     hclient = PCRClient(hide_account["viewer_id"])
     hclient.login(hide_account["uid"], hide_account["access_key"])
     grand_info = hclient.callapi('/grand_arena/info', {})

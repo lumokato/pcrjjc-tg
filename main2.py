@@ -13,7 +13,7 @@ def main():
     dp = bot.dispatcher
     dp.add_handler(CommandHandler('pp', top.on_query_ptop, run_async=True))
     dp.add_handler(CommandHandler('p', top.on_query_plist, run_async=True))
-    dp.add_handler(CommandHandler('hide', hide.hide_process, run_async=True), args=["2"])
+    dp.add_handler(CommandHandler('hide', hide.hide_process, run_async=True))
     bot.start_polling()
 
 
