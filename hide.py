@@ -4,14 +4,12 @@ from json import load
 from wechat import send_wechat
 
 
-with open('account.json', encoding='utf-8') as fp:
-    load_data = load(fp)
-    hide_account = load_data['hide']
-    hide_user = load_data['hide_user']
-    wechat_bot = load_data['wechat']
-
-
 def hide_process(hide_rank="2", update=None, context=None):
+    with open('account.json', encoding='utf-8') as fp:
+        load_data = load(fp)
+        hide_account = load_data['hide']
+        hide_user = load_data['hide_user']
+        wechat_bot = load_data['wechat']
     hclient = PCRClient(hide_account["viewer_id"])
     hclient.login(hide_account["uid"], hide_account["access_key"])
     grand_info = hclient.callapi('/grand_arena/info', {})
@@ -36,10 +34,9 @@ def hide_process(hide_rank="2", update=None, context=None):
                 break
             loop_count += 1
             time.sleep(2)
-
+    send_wechat(msg, wechat_bot["bot3"])
     if update:
         context.bot.send_message(update.effective_chat.id, msg)
-    send_wechat(msg, wechat_bot["bot3"])
 
 
 if __name__ == '__main__':
