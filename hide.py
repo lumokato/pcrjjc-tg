@@ -4,7 +4,7 @@ from json import load
 from wechat import send_wechat
 
 
-def hide_process(hide_rank="2", update=None, context=None):
+def hide_process(update=None, context=None, hide_rank="2"):
     with open('account.json', encoding='utf-8') as fp:
         load_data = load(fp)
         hide_account = load_data['hide']
