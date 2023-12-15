@@ -173,7 +173,6 @@ class PCRClient:
         if 'server_error' in self.home:
             self.callapi('tool/sdk_login', {"uid": uid, "access_key": access_key, "platform": self.default_headers["PLATFORM-ID"], "channel_id": self.default_headers["CHANNEL-ID"]})
             self.callapi('check/game_start', {"app_type": 0, "campaign_data": "", "campaign_user": random.randint(1, 1000000)})
-            self.callapi("check/check_agreement", {})
         return self.load, self.home
 
 
