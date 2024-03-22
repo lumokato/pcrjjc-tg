@@ -219,6 +219,7 @@ def on_arena_schedule(context):
                 continue
             last = cache[user]
             cache[user] = res
+            logger.info(f'last: {last}, now: {res}')
 
             if res[0] > last[0] and info['arena_on'] and res[2] == last[2]:
                 bot_text = f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}'
