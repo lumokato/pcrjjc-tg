@@ -213,21 +213,21 @@ def on_arena_schedule(context):
         try:
             logger.info(f'querying {info["id"]} for {info["chatid"]}')
             res = query(info['id'])
-            res = (res['user_info']['arena_rank'], res['user_info']['grand_arena_rank'])
+            res = (res['user_info']['arena_rank'], res['user_info']['grand_arena_rank'], res['user_info']['viewer_id'])
             if user not in cache:
                 cache[user] = res
                 continue
             last = cache[user]
             cache[user] = res
 
-            if res[0] > last[0] and info['arena_on']:
+            if res[0] > last[0] and info['arena_on'] and res[2] == last[2]:
                 bot_text = f'jjc：{last[0]}->{res[0]} ▼{res[0]-last[0]}'
                 if info['chatid']:
                     context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
                 # 添加企业微信提醒
                 send_wechat(bot_text, info['bot_key'])
 
-            if res[1] > last[1] and info['grand_arena_on']:
+            if res[1] > last[1] and info['grand_arena_on'] and res[2] == last[2]:
                 bot_text = f'pjjc：{last[1]}->{res[1]} ▼{res[1]-last[1]}'
                 if info['chatid']:
                     context.bot.send_message(chat_id=int(info['chatid']), text=bot_text)
