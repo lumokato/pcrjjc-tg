@@ -119,7 +119,8 @@ def on_query_plist(update, context):
         ranking_name = []
         if 'ranking' in res:
             for user in res['ranking']:
-                ranking_name.append(str(user['rank']) + '-' + user['user_name'])
+                res_user = pclient.callapi('/profile/get_profile', {'target_viewer_id': int(user['viewer_id'])})
+                ranking_name.append(str(user['rank']) + '-' + res_user['user_info']["user_name"])
             text = f'''公主竞技场前20名:{', '.join(ranking_name)}'''
         context.bot.send_message(update.effective_chat.id, text)
         # send_wechat(text, wechat_bot["bot1"])
