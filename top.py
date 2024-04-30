@@ -8,7 +8,8 @@ import logging
 
 with open('account.json', encoding='utf-8') as fp:
     load_data = load(fp)
-    top_account = load_data['top']
+    grand_account = load_data['grand']
+    arena_account = load_data['arena']
     wechat_bot = load_data['wechat']
 
 
@@ -33,8 +34,8 @@ binds = root['arena_bind']
 
 cache = {}
 
-pclient = PCRClient(top_account["viewer_id"])
-pclient.login(top_account["uid"], top_account["access_key"])
+pclient = PCRClient(grand_account["viewer_id"])
+pclient.login(grand_account["uid"], grand_account["access_key"])
 
 
 def query(client, id: str):
@@ -42,7 +43,7 @@ def query(client, id: str):
             'target_viewer_id': int(id)
         })
     if 'user_info' not in res:
-        client.login(top_account["uid"], top_account["access_key"])
+        client.login(grand_account["uid"], grand_account["access_key"])
         res = client.callapi('/profile/get_profile', {
             'target_viewer_id': int(id)})
     return res
@@ -60,7 +61,7 @@ def query(client, id: str):
 def query_pranking(client):
     res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
     if 'ranking' not in res:
-        client.login(top_account["uid"], top_account["access_key"])
+        client.login(grand_account["uid"], grand_account["access_key"])
         res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
     ranking_dict = {}
     if 'ranking' in res:
@@ -114,7 +115,7 @@ def on_query_plist(update, context):
     try:
         res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         if 'ranking' not in res:
-            pclient.login(top_account["uid"], top_account["access_key"])
+            pclient.login(grand_account["uid"], grand_account["access_key"])
             res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         ranking_name = []
         if 'ranking' in res:
@@ -128,6 +129,28 @@ def on_query_plist(update, context):
         context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
 
+def on_query_alist(update, context):
+
+    aclient = PCRClient(arena_account["viewer_id"])
+    aclient.login(arena_account["uid"], arena_account["access_key"])
+    try:
+        res = aclient.callapi('/arena/ranking', {'limit': 20, 'page': 1})
+        if 'ranking' not in res:
+            aclient.login(arena_account["uid"], arena_account["access_key"])
+            res = pclient.callapi('/arena/ranking', {'limit': 20, 'page': 1})
+        ranking_name = []
+        if 'ranking' in res:
+            for user in res['ranking']:
+                res_user = aclient.callapi('/profile/get_profile', {'target_viewer_id': int(user['viewer_id'])})
+                ranking_name.append(str(user['rank']) + '-' + res_user['user_info']["user_name"])
+            text = f'''竞技场前20名:{', '.join(ranking_name)}'''
+        context.bot.send_message(update.effective_chat.id, text)
+        # send_wechat(text, wechat_bot["bot1"])
+    except ApiException as e:
+        context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
+
+
+
 def on_query_pwild():
     try:
         with open('wild.json', encoding='utf-8') as fp:
@@ -136,7 +159,7 @@ def on_query_pwild():
 
         res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         if 'ranking' not in res:
-            pclient.login(top_account["uid"], top_account["access_key"])
+            pclient.login(grand_account["uid"], grand_account["access_key"])
             res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         user_wild = []
         wild_flag = 0

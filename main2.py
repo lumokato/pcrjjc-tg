@@ -12,6 +12,7 @@ def main():
     bot = Updater(token=tgbot["TOKEN2"], request_kwargs={'proxy_url': tgbot["proxy_url"]}, use_context=True)
     dp = bot.dispatcher
     dp.add_handler(CommandHandler('pp', top.on_query_ptop, run_async=True))
+    dp.add_handler(CommandHandler('a', top.on_query_alist, run_async=True))
     dp.add_handler(CommandHandler('p', top.on_query_plist, run_async=True))
     dp.add_handler(CommandHandler('hide', hide.hide_process, run_async=True))
     bot.start_polling()
