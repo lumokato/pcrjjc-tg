@@ -11,7 +11,10 @@ with open('account.json', encoding='utf-8') as fp:
 
 def main():
     proxy_url = tgbot["proxy_url"]
-    app = ApplicationBuilder().token(tgbot["TOKEN2"]).proxy(proxy_url).get_updates_proxy(proxy_url).read_timeout(600).write_timeout(600).connect_timeout(600).pool_timeout(600).build()
+    if proxy_url:
+        app = ApplicationBuilder().token(tgbot["TOKEN2"]).proxy(proxy_url).get_updates_proxy(proxy_url).read_timeout(600).write_timeout(600).connect_timeout(600).pool_timeout(600).build()
+    else:
+        app = ApplicationBuilder().token(tgbot["TOKEN2"]).read_timeout(600).write_timeout(600).connect_timeout(600).pool_timeout(600).build()
 
     app.add_handler(CommandHandler('pp', top.on_query_ptop))
     app.add_handler(CommandHandler('a', top.on_query_alist))
