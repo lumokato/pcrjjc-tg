@@ -1,4 +1,4 @@
-from pcrclient import PCRClient, ApiException
+from pcrclient import pcrclient, ApiException
 import time
 from os.path import dirname, join, exists
 from json import load, dump
@@ -34,35 +34,26 @@ binds = root['arena_bind']
 
 cache = {}
 
-pclient = PCRClient(grand_account["viewer_id"])
-pclient.login(grand_account["uid"], grand_account["access_key"])
+# pclient = pcrclient(grand_account["uid"])
 
-
-def query(client, id: str):
-    res = client.callapi('/profile/get_profile', {
+async def query(client, id: str):
+    res = await client.callapi('/profile/get_profile', {
             'target_viewer_id': int(id)
         })
     if 'user_info' not in res:
-        client.login(grand_account["uid"], grand_account["access_key"])
-        res = client.callapi('/profile/get_profile', {
+        await client.login()
+        res = await client.callapi('/profile/get_profile', {
             'target_viewer_id': int(id)})
     return res
 
 
-# def query_ranking(client):
-#     res = client.callapi('/arena/ranking', {'limit': 20, 'page': 1})
-#     ranking_dict = {}
-#     if 'ranking' in res:
-#         for user in res['ranking']:
-#             ranking_dict[user['viewer_id']] = user['rank']
-#     return ranking_dict
+async def query_ranking(client, arena_or_grand):
+    url = '/arena/ranking' if arena_or_grand == 'arena' else '/grand_arena/ranking'
 
-
-def query_pranking(client):
-    res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+    res = await client.callapi(url, {'limit': 20, 'page': 1})
     if 'ranking' not in res:
-        client.login(grand_account["uid"], grand_account["access_key"])
-        res = client.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+        await client.login()
+        res = await client.callapi(url, {'limit': 20, 'page': 1})
     ranking_dict = {}
     if 'ranking' in res:
         for user in res['ranking']:
@@ -70,7 +61,7 @@ def query_pranking(client):
     return ranking_dict
 
 
-def on_query_ptop(update=None, context=None):
+async def on_query_ptop(update=None, context=None):
     if update:
         chat_id = str(update.effective_chat.id)
     else:
@@ -80,16 +71,17 @@ def on_query_ptop(update=None, context=None):
         for user in bind_cache:
             info = bind_cache[user]
             chat_id = int(info['chatid'])
-    # client = PCRClient(top_account["viewer_id"])
-    # client.login(top_account["uid"], top_account["access_key"])
+
+    pclient = pcrclient(grand_account["uid"])
+    await pclient.login()
 
     try:
-        top_dict = query_pranking(pclient)
+        top_dict = await query_ranking(pclient, 'grand')
         last10 = []
         last30 = []
         last60 = []
         for top in top_dict.keys():
-            res = query(pclient, int(top))
+            res = await query(pclient, int(top))
             last_login_time = int(res['user_info']['last_login_time'])
             login_from_now = int(time.time()) - last_login_time
 
@@ -103,88 +95,89 @@ def on_query_ptop(update=None, context=None):
     最近10分钟上线：{'，'.join(last10)}
     最近30分钟上线：{'，'.join(last30)}
     最近60分钟上线：{'，'.join(last60)}'''
-        context.bot.send_message(chat_id, bot_text)
+        await context.bot.send_message(chat_id, bot_text)
         # context.bot.send_message(update.effective_chat.id, bot_text)
     except ApiException as e:
-        context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
+        await context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
 
-def on_query_plist(update, context):
-    # client = PCRClient(top_account["viewer_id"])
-    # client.login(top_account["uid"], top_account["access_key"])
+async def on_query_plist(update, context):
+    pclient = pcrclient(grand_account["uid"])
+    await pclient.login()
     try:
-        res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+        top_dict = await query_ranking(pclient, 'grand')
+
+        res = await pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         if 'ranking' not in res:
-            pclient.login(grand_account["uid"], grand_account["access_key"])
-            res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+            await pclient.login()
+            res = await pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
         ranking_name = []
-        if 'ranking' in res:
-            for user in res['ranking']:
-                res_user = pclient.callapi('/profile/get_profile', {'target_viewer_id': int(user['viewer_id'])})
-                ranking_name.append(str(user['rank']) + '-' + res_user['user_info']["user_name"])
-            text = f'''公主竞技场前20名:{', '.join(ranking_name)}'''
-        context.bot.send_message(update.effective_chat.id, text)
+
+        for top in top_dict.keys():
+            res_user = await query(pclient, int(top))
+            ranking_name.append(str(top_dict[top]) + '-' + res_user['user_info']["user_name"])
+        text = f'''公主竞技场前20名:{', '.join(ranking_name)}'''
+        await context.bot.send_message(update.effective_chat.id, text)
         # send_wechat(text, wechat_bot["bot1"])
     except ApiException as e:
-        context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
+        await context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
 
-def on_query_alist(update, context):
+async def on_query_alist(update, context):
 
-    aclient = PCRClient(arena_account["viewer_id"])
-    aclient.login(arena_account["uid"], arena_account["access_key"])
+    aclient = pcrclient(arena_account["uid"])
+    await aclient.login()
     try:
-        res = aclient.callapi('/arena/ranking', {'limit': 20, 'page': 1})
+        res = await aclient.callapi('/arena/ranking', {'limit': 20, 'page': 1})
         if 'ranking' not in res:
-            aclient.login(arena_account["uid"], arena_account["access_key"])
-            res = pclient.callapi('/arena/ranking', {'limit': 20, 'page': 1})
+            await aclient.login()
+            res = await aclient.callapi('/arena/ranking', {'limit': 20, 'page': 1})
         ranking_name = []
         if 'ranking' in res:
             for user in res['ranking']:
-                res_user = aclient.callapi('/profile/get_profile', {'target_viewer_id': int(user['viewer_id'])})
+                res_user = await aclient.callapi('/profile/get_profile', {'target_viewer_id': int(user['viewer_id'])})
                 ranking_name.append(str(user['rank']) + '-' + res_user['user_info']["user_name"])
             text = f'''竞技场前20名:{', '.join(ranking_name)}'''
-        context.bot.send_message(update.effective_chat.id, text)
+        await context.bot.send_message(update.effective_chat.id, text)
         # send_wechat(text, wechat_bot["bot1"])
     except ApiException as e:
-        context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
+        await context.bot.send_message(update.effective_chat.id, f'查询出错，{e}')
 
 
+# def on_query_pwild():
+#     try:
+#         with open('wild.json', encoding='utf-8') as fp:
+#             group_user = load(fp)
+#         logger.info('querying grand arena top')
 
-def on_query_pwild():
-    try:
-        with open('wild.json', encoding='utf-8') as fp:
-            group_user = load(fp)
-        logger.info('querying grand arena top')
-
-        res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
-        if 'ranking' not in res:
-            pclient.login(grand_account["uid"], grand_account["access_key"])
-            res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
-        user_wild = []
-        wild_flag = 0
-        write_flag = 0
-        if 'ranking' in res:
-            for user in res['ranking']:
-                if str(user['viewer_id']) not in group_user["group"] and user['rank'] < 5:
-                    wild_flag = 1
-                    if str(user['viewer_id']) not in group_user["wild"]:
-                        write_flag = 1
-                        group_user['wild'][str(user['viewer_id'])] = user['user_name']
-                        user_wild.append(str(user['rank']) + '-' + user['user_name'])
-            if not wild_flag and group_user["wild"]:
-                write_flag = 1
-                group_user["wild"] = {}
-        if write_flag:
-            with open('wild.json', 'w', encoding='utf-8') as fp:
-                dump(group_user, fp, indent=4, ensure_ascii=False)
-        if user_wild:
-            bot_text = f'''注意:{', '.join(user_wild)}'''
-            # 企业微信提醒
-            send_wechat(bot_text, wechat_bot["bot2"])
-    except Exception:
-        logger.info('查询出错\n')
+#         res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+#         if 'ranking' not in res:
+#             pclient.login(grand_account["uid"], grand_account["access_key"])
+#             res = pclient.callapi('/grand_arena/ranking', {'limit': 20, 'page': 1})
+#         user_wild = []
+#         wild_flag = 0
+#         write_flag = 0
+#         if 'ranking' in res:
+#             for user in res['ranking']:
+#                 if str(user['viewer_id']) not in group_user["group"] and user['rank'] < 5:
+#                     wild_flag = 1
+#                     if str(user['viewer_id']) not in group_user["wild"]:
+#                         write_flag = 1
+#                         group_user['wild'][str(user['viewer_id'])] = user['user_name']
+#                         user_wild.append(str(user['rank']) + '-' + user['user_name'])
+#             if not wild_flag and group_user["wild"]:
+#                 write_flag = 1
+#                 group_user["wild"] = {}
+#         if write_flag:
+#             with open('wild.json', 'w', encoding='utf-8') as fp:
+#                 dump(group_user, fp, indent=4, ensure_ascii=False)
+#         if user_wild:
+#             bot_text = f'''注意:{', '.join(user_wild)}'''
+#             # 企业微信提醒
+#             send_wechat(bot_text, wechat_bot["bot2"])
+#     except Exception:
+#         logger.info('查询出错\n')
 
 
-if __name__ == "__main__":
-    on_query_pwild()
+# if __name__ == "__main__":
+#     on_query_pwild()
